@@ -33,3 +33,12 @@ def reject_user(user_id):
     db.session.commit()
     flash(f'User {user.email} request rejected and deleted.', 'info')
     return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/admin/delete/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    email = user.email
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'Account for {email} has been permanently deleted.', 'info')
+    return redirect(url_for('admin.dashboard'))
