@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitara{% block title %}{% endblock %}</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;1,600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feed.css') }}">
+    <!-- Icons (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="app-container">
+        {% if current_user.is_authenticated %}
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i data-lucide="leaf"></i> Vitara
+            </div>
+            <nav class="nav-menu">
+                <a href="{{ url_for('social.feed') }}" class="nav-item {% if request.endpoint == 'social.feed' %}active{% endif %}">
+                    <i data-lucide="globe"></i> Feed
+                </a>
+                <a href="{{ url_for('main.dashboard') }}" class="nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                <a href="{{ url_for('journal.index') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('journal') %}active{% endif %}">
+                    <i data-lucide="book-open"></i> Journal
+                </a>
+                <a href="#" class="nav-item">
+                    <i data-lucide="activity"></i> Fitness
+                </a>
+                <div style="flex: 1"></div>
+                <a href="{{ url_for('auth.logout') }}" class="nav-item">
+                    <i data-lucide="log-out"></i> Logout
+                </a>
+            </nav>
+        </aside>
+        {% endif %}
+
+        <main class="main-content">
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Initialize Icons -->
+    <script>
+      lucide.createIcons();
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

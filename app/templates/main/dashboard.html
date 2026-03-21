@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %} - Dashboard{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 40px;">
+    <h1>Good to see you, {{ current_user.display_name }}.</h1>
+    <p class="text-muted" style="color: var(--color-muted);">Here's your summary for today.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+    <!-- Placeholder cards for Dashboard Widgets -->
+    <div class="card">
+        <h3><i data-lucide="book" style="vertical-align: middle; margin-right: 8px;"></i> Journal</h3>
+        <p style="margin-top: 12px; color: var(--color-muted);">You haven't checked in today.</p>
+        <button class="btn btn-primary" style="margin-top: 16px;">New Entry</button>
+    </div>
+
+    <div class="card">
+        <h3><i data-lucide="activity" style="vertical-align: middle; margin-right: 8px;"></i> Fitness</h3>
+        <p style="margin-top: 12px; color: var(--color-muted);">No workouts logged this week.</p>
+        <button class="btn btn-outline" style="margin-top: 16px;">Log Workout</button>
+    </div>
+</div>
+
+<div style="margin-top: 40px;">
+    <h2>My Progress Pictures</h2>
+    {% if my_pics %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+        {% for pic in my_pics %}
+        <div class="card" style="padding: 8px;">
+            <img src="{{ url_for('static', filename='uploads/' + pic.image_path) }}" alt="Progress" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #000;">
+            <div style="margin-top: 8px; font-size: 0.85rem; color: var(--color-muted); display: flex; justify-content: space-between;">
+                <span>{{ pic.created_at.strftime('%b %d, %Y') }}</span>
+                {% if pic.is_public %}
+                <span style="color: var(--color-accent);"><i data-lucide="globe" style="width: 14px; height: 14px; vertical-align: middle;"></i> Public</span>
+                {% else %}
+                <span><i data-lucide="lock" style="width: 14px; height: 14px; vertical-align: middle;"></i> Private</span>
+                {% endif %}
+            </div>
+            {% if pic.caption %}
+            <p style="margin-top: 4px; font-size: 0.9rem;">{{ pic.caption }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 32px 16px; margin-top: 16px;">
+        <p class="text-muted">You haven't uploaded any progress pictures yet.</p>
+        <a href="{{ url_for('social.upload_pic') }}" class="btn btn-outline" style="margin-top: 12px;">Upload Picture</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
