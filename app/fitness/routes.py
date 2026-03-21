@@ -21,13 +21,17 @@ def index():
 def log_workout():
     form = WorkoutForm()
     if form.validate_on_submit():
+        distance_val = form.distance.data
+        if distance_val is not None and current_user.units == 'imperial':
+            distance_val = round(distance_val / 0.621371, 2)
+            
         workout = Workout(
             user_id=current_user.id,
             workout_type=form.workout_type.data,
             workout_date=form.workout_date.data,
             workout_time=form.workout_time.data,
             duration_mins=form.duration_mins.data,
-            distance=form.distance.data,
+            distance=distance_val,
             calories=form.calories.data,
             notes=form.notes.data
         )
@@ -46,6 +50,9 @@ def log_workout():
                     sets_val = int(exercise_sets[i]) if exercise_sets[i] else None
                     reps_val = int(exercise_reps[i]) if exercise_reps[i] else None
                     weight_val = float(exercise_weight[i]) if exercise_weight[i] else None
+                    
+                    if current_user.units == 'imperial' and weight_val is not None:
+                        weight_val = round(weight_val / 2.20462, 2)
 
                     ex = Exercise(
                         workout_id=workout.id,

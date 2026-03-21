@@ -43,6 +43,13 @@
                 </div>
                 <div style="color: var(--color-muted); font-size: 0.9rem; margin-top: 4px;">
                     {% if workout.duration_mins %}{{ workout.duration_mins }} mins{% endif %}
+                    {% if workout.distance %} • 
+                        {% if current_user.units == 'imperial' %}
+                            {{ (workout.distance * 0.621371)|round(2) }} mi
+                        {% else %}
+                            {{ workout.distance }} km
+                        {% endif %}
+                    {% endif %}
                     {% if workout.calories %} • {{ workout.calories }} kcal{% endif %}
                 </div>
             </div>
@@ -69,11 +76,15 @@
             </thead>
             <tbody>
                 {% for ex in workout.exercises %}
+                {% set display_weight = ex.weight %}
+                {% if ex.weight and current_user.units == 'imperial' %}
+                    {% set display_weight = (ex.weight * 2.20462)|round(2) %}
+                {% endif %}
                 <tr>
                     <td>{{ ex.name }}</td>
                     <td>{{ ex.sets or '-' }}</td>
                     <td>{{ ex.reps or '-' }}</td>
-                    <td>{{ ex.weight or '-' }}</td>
+                    <td>{{ display_weight or '-' }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

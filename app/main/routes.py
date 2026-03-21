@@ -19,13 +19,18 @@ def index():
 def dashboard():
     from app.models.progress import ProgressPicture
     from app.models.fitness import Workout
+    from app.models.journal import JournalEntry
+    from datetime import date, timedelta, datetime
     
     my_pics = ProgressPicture.query.filter_by(user_id=current_user.id).order_by(ProgressPicture.created_at.desc()).all()
     
     seven_days_ago = date.today() - timedelta(days=7)
     recent_workouts = Workout.query.filter_by(user_id=current_user.id).filter(Workout.workout_date >= seven_days_ago).count()
     
-    return render_template('main/dashboard.html', my_pics=my_pics, recent_workouts=recent_workouts)
+    start_of_day = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    journal_today = JournalEntry.query.filter_by(user_id=current_user.id).filter(JournalEntry.created_at >= start_of_day).count()
+    
+    return render_template('main/dashboard.html', my_pics=my_pics, recent_workouts=recent_workouts, journal_today=journal_today)
 
 @main_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
@@ -82,4 +87,15 @@ def remove_profile_pic():
         current_user.profile_pic_path = None
         db.session.commit()
         flash('Profile picture removed.', 'success')
+    return redirect(url_for('main.profile'))
+
+@main_bp.route('/profile/invite', methods=['POST'])
+@login_required
+def generate_invite():
+    from app.models.invite import InviteToken
+    new_invite = InviteToken(creator_id=current_user.id)
+    db.session.add(new_invite)
+    db.session.commit()
+    invite_url = url_for('auth.register', invite=new_invite.token, _external=True)
+    flash(f'Your friend invitation link: {invite_url}', 'success')
     return redirect(url_for('main.profile'))

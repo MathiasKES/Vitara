@@ -48,13 +48,17 @@ def create_app(config_name='default'):
     from app.admin.routes import admin_bp
     app.register_blueprint(admin_bp, url_prefix='/')
 
+    # Register Models to Metadata
+    from app.models.invite import InviteToken
+
     @app.shell_context_processor
     def make_shell_context():
         from app.models.user import User
-        # Include future models here
+        from app.models.invite import InviteToken
         return {
             'db': db,
-            'User': User
+            'User': User,
+            'InviteToken': InviteToken
         }
 
     return app

@@ -6,7 +6,15 @@
 <div class="card" style="max-width: 600px; margin: 0 auto; padding: 40px;">
     <h2 style="margin-bottom: 32px;">Profile Settings</h2>
 
+    <div style="margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--color-border); text-align: center;">
+        <p class="text-muted" style="margin-bottom: 12px;">Got a friend? Generate a one-time url bypassing admin approval.</p>
+        <form method="POST" action="{{ url_for('main.generate_invite') }}">
+            <button type="submit" class="btn btn-outline">Generate Invite Link</button>
+        </form>
+    </div>
+
     <form method="POST" enctype="multipart/form-data" action="{{ url_for('main.profile') }}">
+        {{ form.hidden_tag() }}
         <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 32px;">
             <div style="position: relative; display: inline-block;">
                 {% if current_user.profile_pic_path %}
