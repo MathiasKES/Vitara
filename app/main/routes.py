@@ -1,5 +1,6 @@
 import os
 import secrets
+from datetime import date, timedelta
 from flask import Blueprint, render_template, redirect, url_for, request, current_app, flash
 from flask_login import login_required, current_user
 from app import db
@@ -17,8 +18,14 @@ def index():
 @login_required
 def dashboard():
     from app.models.progress import ProgressPicture
+    from app.models.fitness import Workout
+    
     my_pics = ProgressPicture.query.filter_by(user_id=current_user.id).order_by(ProgressPicture.created_at.desc()).all()
-    return render_template('main/dashboard.html', my_pics=my_pics)
+    
+    seven_days_ago = date.today() - timedelta(days=7)
+    recent_workouts = Workout.query.filter_by(user_id=current_user.id).filter(Workout.workout_date >= seven_days_ago).count()
+    
+    return render_template('main/dashboard.html', my_pics=my_pics, recent_workouts=recent_workouts)
 
 @main_bp.route('/profile', methods=['GET', 'POST'])
 @login_required

@@ -18,7 +18,11 @@
 
     <div class="card">
         <h3><i data-lucide="activity" style="vertical-align: middle; margin-right: 8px;"></i> Fitness</h3>
+        {% if recent_workouts > 0 %}
+        <p style="margin-top: 12px; font-weight: 500; color: var(--color-accent);">{{ recent_workouts }} workout{% if recent_workouts != 1 %}s{% endif %} logged this week.</p>
+        {% else %}
         <p style="margin-top: 12px; color: var(--color-muted);">No workouts logged this week.</p>
+        {% endif %}
         <a href="{{ url_for('fitness.log_workout') }}" class="btn btn-outline" style="margin-top: 16px; display: inline-block;">Log Workout</a>
     </div>
 </div>

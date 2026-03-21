@@ -10,6 +10,7 @@ class Workout(db.Model):
     workout_date = db.Column(db.Date, nullable=False, default=date.today)
     workout_time = db.Column(db.Time, nullable=True)
     duration_mins = db.Column(db.Integer)
+    distance = db.Column(db.Float)
     calories = db.Column(db.Integer)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

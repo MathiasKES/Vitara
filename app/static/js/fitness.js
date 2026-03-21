@@ -5,13 +5,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const addExerciseBtn = document.getElementById('add-exercise-btn');
 
     function toggleStrengthSection() {
-        if (typeSelect.value === 'Strength') {
-            strengthSection.style.display = 'block';
-            if (exerciseRowsContainer.children.length === 0) {
-                addExerciseRow(); // Add one row by default
-            }
-        } else {
-            strengthSection.style.display = 'none';
+        const isStrength = (typeSelect.value === 'Strength');
+        strengthSection.style.display = isStrength ? 'block' : 'none';
+        
+        // Prevent broken required attributes passing when hidden
+        const strengthInputs = strengthSection.querySelectorAll('input');
+        strengthInputs.forEach(input => {
+            input.disabled = !isStrength;
+        });
+
+        if (isStrength && exerciseRowsContainer.children.length === 0) {
+            addExerciseRow(); // Add one row by default
+        }
+        
+        const distanceSection = document.getElementById('distance-section');
+        if (distanceSection) {
+            const needsDistance = ['Running', 'Cycling', 'Swimming', 'Walking'].includes(typeSelect.value);
+            distanceSection.style.display = needsDistance ? 'block' : 'none';
         }
     }
 

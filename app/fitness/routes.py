@@ -27,6 +27,7 @@ def log_workout():
             workout_date=form.workout_date.data,
             workout_time=form.workout_time.data,
             duration_mins=form.duration_mins.data,
+            distance=form.distance.data,
             calories=form.calories.data,
             notes=form.notes.data
         )

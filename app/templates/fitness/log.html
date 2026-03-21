@@ -30,14 +30,18 @@
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-            <div>
+        <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+            <div style="flex: 1;">
                 {{ form.duration_mins.label(class="form-label") }}
-                {{ form.duration_mins(class="form-control", placeholder="e.g. 45") }}
+                {{ form.duration_mins(class="form-control", placeholder="Mins") }}
             </div>
-            <div>
+            <div style="flex: 1; display: none;" id="distance-section">
+                <label class="form-label" for="distance">Distance ({{ 'km' if current_user.units == 'metric' else 'mi' }})</label>
+                {{ form.distance(class="form-control", step="0.01", placeholder="0.00") }}
+            </div>
+            <div style="flex: 1;">
                 {{ form.calories.label(class="form-label") }}
-                {{ form.calories(class="form-control", placeholder="e.g. 300") }}
+                {{ form.calories(class="form-control", placeholder="kcal") }}
             </div>
         </div>
 
