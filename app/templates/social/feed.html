@@ -16,9 +16,13 @@
         <div class="post-card">
             <div class="post-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="display: flex; gap: 12px; align-items: center;">
-                    <div class="post-avatar">
+                    {% if pic.user.profile_pic_path %}
+                    <img src="{{ url_for('static', filename='uploads/' + pic.user.profile_pic_path) }}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                    <div class="post-avatar" style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--color-bg); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--color-accent);">
                         {{ pic.user.display_name[0]|upper }}
                     </div>
+                    {% endif %}
                     <div class="post-meta">
                         <h4>{{ pic.user.display_name }}</h4>
                         <span>{{ pic.created_at.strftime('%b %d at %H:%M') }}</span>

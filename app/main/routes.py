@@ -3,6 +3,7 @@ import secrets
 from flask import Blueprint, render_template, redirect, url_for, request, current_app, flash
 from flask_login import login_required, current_user
 from app import db
+from app.models.user import User
 
 main_bp = Blueprint('main', __name__)
 
@@ -37,11 +38,41 @@ def profile():
                 flash('Profile picture updated.', 'success')
         
         display_name = request.form.get('display_name')
+        email = request.form.get('email')
+        theme = request.form.get('theme')
+        units = request.form.get('units')
+
+        if email and email != current_user.email:
+            existing_user = User.query.filter_by(email=email).first()
+            if existing_user:
+                flash('Email address is already in use.', 'danger')
+            else:
+                current_user.email = email
+                db.session.commit()
+                flash('Email updated.', 'success')
+        
         if display_name:
             current_user.display_name = display_name
-            db.session.commit()
-            flash('Profile details updated.', 'success')
+        if theme:
+            current_user.theme = theme
+        if units:
+            current_user.units = units
+            
+        db.session.commit()
+        flash('Profile settings updated.', 'success')
             
         return redirect(url_for('main.profile'))
         
     return render_template('main/profile.html')
+
+@main_bp.route('/profile/remove_pic', methods=['POST'])
+@login_required
+def remove_profile_pic():
+    if current_user.profile_pic_path:
+        upload_path = os.path.join(current_app.root_path, 'static', 'uploads', current_user.profile_pic_path)
+        if os.path.exists(upload_path):
+            os.remove(upload_path)
+        current_user.profile_pic_path = None
+        db.session.commit()
+        flash('Profile picture removed.', 'success')
+    return redirect(url_for('main.profile'))

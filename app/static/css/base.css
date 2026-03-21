@@ -28,6 +28,16 @@
   }
 }
 
+body.dark-theme {
+  --color-bg: #1C1917;
+  --color-surface: #292524;
+  --color-border: #44403C;
+  --color-text: #F7F5F0;
+  --color-muted: #A8A29E;
+  --color-accent: #4ADE80;
+  --color-accent-lt: #14532D;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

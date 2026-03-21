@@ -16,6 +16,8 @@ class User(UserMixin, db.Model):
     is_approved = db.Column(db.Boolean, default=False)
     allows_admin_emails = db.Column(db.Boolean, default=True)
     profile_pic_path = db.Column(db.String(255), nullable=True)
+    theme = db.Column(db.String(20), default='light')
+    units = db.Column(db.String(20), default='metric')
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     last_seen = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 

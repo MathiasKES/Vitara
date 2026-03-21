@@ -64,7 +64,7 @@
                     <th>Exercise</th>
                     <th>Sets</th>
                     <th>Reps</th>
-                    <th>Weight</th>
+                    <th>Weight ({{ 'kg' if current_user.units == 'metric' else 'lb' }})</th>
                 </tr>
             </thead>
             <tbody>
