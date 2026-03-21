@@ -18,9 +18,15 @@
                 {{ form.workout_type.label(class="form-label") }}
                 {{ form.workout_type(class="form-control", id="workout-type-select") }}
             </div>
-            <div>
-                {{ form.workout_date.label(class="form-label") }}
-                {{ form.workout_date(class="form-control") }}
+            <div style="display: flex; gap: 12px;">
+                <div style="flex: 1;">
+                    {{ form.workout_date.label(class="form-label") }}
+                    {{ form.workout_date(class="form-control") }}
+                </div>
+                <div style="flex: 1;">
+                    {{ form.workout_time.label(class="form-label") }}
+                    {{ form.workout_time(class="form-control", type="time") }}
+                </div>
             </div>
         </div>
 

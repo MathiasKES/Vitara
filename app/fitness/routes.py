@@ -9,8 +9,12 @@ fitness_bp = Blueprint('fitness', __name__)
 @fitness_bp.route('/fitness')
 @login_required
 def index():
-    workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.workout_date.desc()).all()
-    return render_template('fitness/index.html', workouts=workouts)
+    sort_order = request.args.get('sort', 'newest')
+    if sort_order == 'oldest':
+        workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.workout_date.asc(), Workout.workout_time.asc()).all()
+    else:
+        workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.workout_date.desc(), Workout.workout_time.desc()).all()
+    return render_template('fitness/index.html', workouts=workouts, current_sort=sort_order)
 
 @fitness_bp.route('/fitness/log', methods=['GET', 'POST'])
 @login_required
@@ -21,6 +25,7 @@ def log_workout():
             user_id=current_user.id,
             workout_type=form.workout_type.data,
             workout_date=form.workout_date.data,
+            workout_time=form.workout_time.data,
             duration_mins=form.duration_mins.data,
             calories=form.calories.data,
             notes=form.notes.data
@@ -56,6 +61,18 @@ def log_workout():
         flash('Workout logged successfully!', 'success')
         return redirect(url_for('fitness.index'))
     return render_template('fitness/log.html', form=form)
+
+@fitness_bp.route('/fitness/delete/<int:workout_id>', methods=['POST'])
+@login_required
+def delete_workout(workout_id):
+    workout = Workout.query.get_or_404(workout_id)
+    if workout.user_id != current_user.id:
+        flash('Permission denied.', 'danger')
+        return redirect(url_for('fitness.index'))
+    db.session.delete(workout)
+    db.session.commit()
+    flash('Workout deleted.', 'success')
+    return redirect(url_for('fitness.index'))
 
 @fitness_bp.route('/fitness/stats')
 @login_required

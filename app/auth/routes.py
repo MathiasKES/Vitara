@@ -17,6 +17,9 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid email or password', 'error')
             return redirect(url_for('auth.login'))
+        if not user.is_approved:
+            flash('Your account is still pending admin approval.', 'warning')
+            return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
@@ -32,10 +35,15 @@ def register():
     if form.validate_on_submit():
         user = User(email=form.email.data, display_name=form.display_name.data)
         user.set_password(form.password.data)
+        user.is_approved = False
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!', 'success')
-        return redirect(url_for('auth.login'))
+        
+        admins = User.query.filter_by(is_admin=True, allows_admin_emails=True).all()
+        for admin in admins:
+            print(f"MOCK EMAIL TO {admin.email}: New user '{user.display_name}' ({user.email}) requests access.", flush=True)
+
+        return redirect(url_for('auth.pending'))
     return render_template('auth/register.html', form=form)
 
 @auth_bp.route('/logout')
@@ -43,3 +51,7 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+@auth_bp.route('/pending')
+def pending():
+    return render_template('auth/pending.html')

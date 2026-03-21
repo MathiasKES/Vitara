@@ -14,14 +14,23 @@
     {% if pictures %}
         {% for pic in pictures %}
         <div class="post-card">
-            <div class="post-header">
-                <div class="post-avatar">
-                    {{ pic.user.display_name[0]|upper }}
+            <div class="post-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <div class="post-avatar">
+                        {{ pic.user.display_name[0]|upper }}
+                    </div>
+                    <div class="post-meta">
+                        <h4>{{ pic.user.display_name }}</h4>
+                        <span>{{ pic.created_at.strftime('%b %d at %H:%M') }}</span>
+                    </div>
                 </div>
-                <div class="post-meta">
-                    <h4>{{ pic.user.display_name }}</h4>
-                    <span>{{ pic.created_at.strftime('%b %d at %H:%M') }}</span>
-                </div>
+                {% if pic.user_id == current_user.id %}
+                <form method="POST" action="{{ url_for('social.delete_pic', pic_id=pic.id) }}" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                    <button type="submit" style="background: none; border: none; color: var(--color-danger); cursor: pointer; padding: 4px;">
+                        <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                    </button>
+                </form>
+                {% endif %}
             </div>
             <img src="{{ url_for('static', filename='uploads/' + pic.image_path) }}" alt="Progress Picture" class="post-image">
             {% if pic.caption %}

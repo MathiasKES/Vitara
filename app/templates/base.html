@@ -24,6 +24,20 @@
             <div class="sidebar-logo">
                 <i data-lucide="leaf"></i> Vitara
             </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--color-border);">
+                {% if current_user.profile_pic_path %}
+                <img src="{{ url_for('static', filename='uploads/' + current_user.profile_pic_path) }}" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                <div style="width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-bg); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--color-accent);">
+                    {{ current_user.display_name[0]|upper }}
+                </div>
+                {% endif %}
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-weight: 600; color: var(--color-text);">{{ current_user.display_name }}</span>
+                    <span style="font-size: 0.8rem; color: var(--color-muted);">{{ current_user.email }}</span>
+                </div>
+            </div>
             <nav class="nav-menu">
                 <a href="{{ url_for('social.feed') }}" class="nav-item {% if request.endpoint == 'social.feed' %}active{% endif %}">
                     <i data-lucide="globe"></i> Feed
@@ -37,7 +51,15 @@
                 <a href="{{ url_for('fitness.index') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('fitness') %}active{% endif %}">
                     <i data-lucide="activity"></i> Fitness
                 </a>
+                <a href="{{ url_for('main.profile') }}" class="nav-item {% if request.endpoint == 'main.profile' %}active{% endif %}">
+                    <i data-lucide="user"></i> Profile
+                </a>
                 <div style="flex: 1"></div>
+                {% if current_user.is_admin %}
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+                    <i data-lucide="shield"></i> Admin
+                </a>
+                {% endif %}
                 <a href="{{ url_for('auth.logout') }}" class="nav-item">
                     <i data-lucide="log-out"></i> Logout
                 </a>
@@ -60,10 +82,31 @@
         </main>
     </div>
 
+    <!-- Global Image Modal -->
+    <div id="image-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; cursor: zoom-out;">
+        <img id="modal-image" src="" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; cursor: default; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+    </div>
+
     <!-- Initialize Icons -->
     <script>
       lucide.createIcons();
+      document.addEventListener('DOMContentLoaded', () => {
+          const modal = document.getElementById('image-modal');
+          const modalImg = document.getElementById('modal-image');
+          if (modal && modalImg) {
+              document.querySelectorAll('img[alt="Progress"], img.post-image').forEach(img => {
+                  img.style.cursor = 'zoom-in';
+                  img.addEventListener('click', () => {
+                      modalImg.src = img.src;
+                      modal.style.display = 'flex';
+                  });
+              });
+              modal.addEventListener('click', (e) => {
+                  if (e.target !== modalImg) {
+                      modal.style.display = 'none';
+                  }
+              });
+          }
+      });
     </script>
-    {% block scripts %}{% endblock %}
-</body>
 </html>

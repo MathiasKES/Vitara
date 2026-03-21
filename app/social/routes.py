@@ -47,3 +47,23 @@ def upload_pic():
         else:
             return redirect(url_for('main.dashboard'))
     return render_template('social/upload.html', form=form)
+
+@social_bp.route('/progress/delete/<int:pic_id>', methods=['POST'])
+@login_required
+def delete_pic(pic_id):
+    pic = ProgressPicture.query.get_or_404(pic_id)
+    if pic.user_id != current_user.id:
+        flash('You do not have permission to delete this.', 'danger')
+        return redirect(url_for('social.feed'))
+    
+    try:
+        file_path = os.path.join(current_app.root_path, 'static', 'uploads', pic.image_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+    except Exception:
+        pass
+
+    db.session.delete(pic)
+    db.session.commit()
+    flash('Picture deleted successfully.', 'success')
+    return redirect(request.referrer or url_for('main.dashboard'))

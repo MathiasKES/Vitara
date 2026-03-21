@@ -44,6 +44,10 @@ def create_app(config_name='default'):
     from app.fitness.routes import fitness_bp
     app.register_blueprint(fitness_bp, url_prefix='/')
 
+    # Admin Blueprint
+    from app.admin.routes import admin_bp
+    app.register_blueprint(admin_bp, url_prefix='/')
+
     @app.shell_context_processor
     def make_shell_context():
         from app.models.user import User

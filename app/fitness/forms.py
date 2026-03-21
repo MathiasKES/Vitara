@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, IntegerField, TextAreaField, SubmitField, DateField
+from wtforms import StringField, SelectField, IntegerField, TextAreaField, SubmitField, DateField, TimeField
 from wtforms.validators import DataRequired, Optional
 from datetime import date
 
@@ -14,6 +14,7 @@ class WorkoutForm(FlaskForm):
         ('Other', 'Other')
     ], validators=[DataRequired()])
     workout_date = DateField('Date', default=date.today, validators=[DataRequired()])
+    workout_time = TimeField('Time', validators=[Optional()])
     duration_mins = IntegerField('Duration (minutes)', validators=[Optional()])
     calories = IntegerField('Calories Burned', validators=[Optional()])
     notes = TextAreaField('Notes', validators=[Optional()])

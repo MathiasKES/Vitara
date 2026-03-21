@@ -8,6 +8,7 @@ class Workout(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     workout_type = db.Column(db.String(50), nullable=False) # 'Running', 'Strength', 'Cycling', etc.
     workout_date = db.Column(db.Date, nullable=False, default=date.today)
+    workout_time = db.Column(db.Time, nullable=True)
     duration_mins = db.Column(db.Integer)
     calories = db.Column(db.Integer)
     notes = db.Column(db.Text)

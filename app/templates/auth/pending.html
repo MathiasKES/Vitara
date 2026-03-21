@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %} - Request Sent{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 60px auto; text-align: center; padding: 48px 32px;">
+    <i data-lucide="mail-check" style="width: 64px; height: 64px; color: var(--color-accent); margin-bottom: 24px;"></i>
+    <h2>Request Submitted!</h2>
+    <p style="margin-top: 16px; color: var(--color-text); line-height: 1.6;">
+        Your request for an account has been sent to the administrators. 
+    </p>
+    <p style="color: var(--color-muted); font-size: 0.95rem; margin-top: 12px;">
+        As Vitara is a private community, an admin will need to approve your account before you can log in. We will notify you once your request has been processed.
+    </p>
+    
+    <div style="margin-top: 32px;">
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Return to Login</a>
+    </div>
+</div>
+{% endblock %}
