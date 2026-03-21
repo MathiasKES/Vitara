@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %} - Fitness{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h2>Workout History</h2>
+    <div>
+        <a href="{{ url_for('fitness.stats') }}" class="btn btn-outline" style="margin-right: 12px;">
+            <i data-lucide="bar-chart-2"></i> Stats
+        </a>
+        <a href="{{ url_for('fitness.log_workout') }}" class="btn btn-primary" style="margin-right: 12px;">
+            <i data-lucide="plus"></i> Log Workout
+        </a>
+        {% if current_sort == 'oldest' %}
+        <a href="{{ url_for('fitness.index', sort='newest') }}" class="btn btn-outline" title="Sort by Newest">
+            <i data-lucide="arrow-up-down"></i> Oldest
+        </a>
+        {% else %}
+        <a href="{{ url_for('fitness.index', sort='oldest') }}" class="btn btn-outline" title="Sort by Oldest">
+            <i data-lucide="arrow-down-up"></i> Newest
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+{% if workouts %}
+<div style="display: grid; gap: 16px;">
+    {% for workout in workouts %}
+    <div class="workout-card">
+        <div class="workout-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <h3 style="margin: 0;">{{ workout.workout_type }}</h3>
+                    <span style="background-color: var(--color-bg); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">
+                        {{ workout.workout_date.strftime('%b %d, %Y') }}
+                        {% if workout.workout_time %} at {{ workout.workout_time.strftime('%H:%M') }}{% endif %}
+                    </span>
+                </div>
+                <div style="color: var(--color-muted); font-size: 0.9rem; margin-top: 4px;">
+                    {% if workout.duration_mins %}{{ workout.duration_mins }} mins{% endif %}
+                    {% if workout.distance %} • 
+                        {% if current_user.units == 'imperial' %}
+                            {{ (workout.distance * 0.621371)|round(2) }} mi
+                        {% else %}
+                            {{ workout.distance }} km
+                        {% endif %}
+                    {% endif %}
+                    {% if workout.calories %} • {{ workout.calories }} kcal{% endif %}
+                </div>
+            </div>
+            <form method="POST" action="{{ url_for('fitness.delete_workout', workout_id=workout.id) }}" onsubmit="return confirm('Are you sure you want to delete this workout?');">
+                <button type="submit" style="background: none; border: none; color: var(--color-danger); cursor: pointer; padding: 4px;">
+                    <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                </button>
+            </form>
+        </div>
+        
+        {% if workout.notes %}
+        <p style="margin-bottom: 16px;">{{ workout.notes }}</p>
+        {% endif %}
+
+        {% if workout.exercises %}
+        <table class="exercise-table">
+            <thead>
+                <tr>
+                    <th>Exercise</th>
+                    <th>Sets</th>
+                    <th>Reps</th>
+                    <th>Weight ({{ 'kg' if current_user.units == 'metric' else 'lb' }})</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ex in workout.exercises %}
+                {% set display_weight = ex.weight %}
+                {% if ex.weight and current_user.units == 'imperial' %}
+                    {% set display_weight = (ex.weight * 2.20462)|round(2) %}
+                {% endif %}
+                <tr>
+                    <td>{{ ex.name }}</td>
+                    <td>{{ ex.sets or '-' }}</td>
+                    <td>{{ ex.reps or '-' }}</td>
+                    <td>{{ display_weight or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 48px 24px;">
+    <p class="text-muted" style="color: var(--color-muted);">You haven't logged any workouts yet.</p>
+</div>
+{% endif %}
+{% endblock %}

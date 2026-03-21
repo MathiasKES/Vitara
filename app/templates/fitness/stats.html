@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %} - Fitness Stats{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <h2>Fitness Statistics</h2>
+    <a href="{{ url_for('fitness.index') }}" class="btn btn-outline">Back to History</a>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+    <!-- Chart Section -->
+    <div class="card">
+        <h3 style="margin-bottom: 16px;">Workout Duration Over Time</h3>
+        <canvas id="durationChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- PR Section -->
+    <div class="card">
+        <h3 style="margin-bottom: 16px;">Personal Records (Max Weight)</h3>
+        {% if prs %}
+        <ul style="list-style: none; padding: 0;">
+            {% for name, weight in prs.items() %}
+            <li style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--color-border);">
+                <strong style="color: var(--color-text);">{{ name }}</strong>
+                <span style="color: var(--color-accent); font-weight: 600;">{{ weight }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted" style="color: var(--color-muted);">No strength records found yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Invisible data container for JS -->
+<div id="chart-data" style="display: none;" 
+     data-labels="{{ workouts|selectattr('duration_mins')|map(attribute='workout_date')|map('string')|list|join(',') }}" 
+     data-durations="{{ workouts|selectattr('duration_mins')|map(attribute='duration_mins')|list|join(',') }}">
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

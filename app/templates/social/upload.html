@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %} - Upload Progress{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 0 auto;">
+    <h2 style="margin-bottom: 24px;">Post Progress Picture</h2>
+
+    <form method="POST" action="" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.photo.label(class="form-label") }}
+            {{ form.photo(class="form-control", style="padding: 8px; cursor: pointer;") }}
+            {% for error in form.photo.errors %}
+                <span style="color: var(--color-danger); font-size: 0.85rem;">[{{ error }}]</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.caption.label(class="form-label") }}
+            {{ form.caption(class="form-control", placeholder="How are you feeling about your progress?") }}
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px; background: var(--color-bg); padding: 12px; border-radius: 8px;">
+            {{ form.is_public() }}
+            <div>
+                {{ form.is_public.label(style="margin-bottom: 0; font-weight: 600; cursor: pointer;") }}
+                <p style="font-size: 0.85rem; color: var(--color-muted); margin: 0;">If checked, this picture will appear on the global community feed.</p>
+            </div>
+        </div>
+
+        <div style="text-align: right; margin-top: 32px;">
+            <a href="{{ request.referrer or url_for('social.feed') }}" class="btn btn-outline" style="margin-right: 12px;">Cancel</a>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

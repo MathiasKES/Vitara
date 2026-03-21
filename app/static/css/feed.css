@@ -1,0 +1,58 @@
+.feed-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.post-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.post-header {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-accent-lt);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: var(--font-display);
+}
+
+.post-meta h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.post-meta span {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+}
+
+.post-image {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+    background-color: #000;
+}
+
+.post-caption {
+    padding: 16px;
+    color: var(--color-text);
+    font-size: 0.95rem;
+}

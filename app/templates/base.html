@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitara{% block title %}{% endblock %}</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;1,600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feed.css') }}">
+    <!-- Icons (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    {% block head %}{% endblock %}
+</head>
+<body class="{{ 'dark-theme' if current_user.is_authenticated and current_user.theme == 'dark' else '' }}">
+    <div class="app-container">
+        {% if current_user.is_authenticated %}
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i data-lucide="leaf"></i> Vitara
+            </div>
+            
+            <a href="{{ url_for('main.profile') }}" class="nav-item {% if request.endpoint == 'main.profile' %}active{% endif %}" style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px; padding: 12px; border-bottom: 1px solid var(--color-border); height: auto; justify-content: flex-start; text-decoration: none;">
+                {% if current_user.profile_pic_path %}
+                <img src="{{ url_for('static', filename='uploads/' + current_user.profile_pic_path) }}" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                <div style="width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-accent-lt); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--color-accent); border: 2px solid var(--color-border);">
+                    {{ current_user.display_name[0]|upper }}
+                </div>
+                {% endif %}
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-weight: 600; color: var(--color-text);">{{ current_user.display_name }}</span>
+                </div>
+            </a>
+            <nav class="nav-menu">
+                <a href="{{ url_for('social.feed') }}" class="nav-item {% if request.endpoint == 'social.feed' %}active{% endif %}">
+                    <i data-lucide="globe"></i> Feed
+                </a>
+                <a href="{{ url_for('main.dashboard') }}" class="nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                <a href="{{ url_for('journal.index') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('journal') %}active{% endif %}">
+                    <i data-lucide="book-open"></i> Journal
+                </a>
+                <a href="{{ url_for('fitness.index') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('fitness') %}active{% endif %}">
+                    <i data-lucide="activity"></i> Fitness
+                </a>
+                <div style="flex: 1"></div>
+                {% if current_user.is_admin %}
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+                    <i data-lucide="shield"></i> Admin
+                </a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}" class="nav-item">
+                    <i data-lucide="log-out"></i> Logout
+                </a>
+            </nav>
+        </aside>
+        {% endif %}
+
+        <main class="main-content">
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Global Image Modal -->
+    <div id="image-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; cursor: zoom-out;">
+        <img id="modal-image" src="" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; cursor: default; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+    </div>
+
+    <!-- Initialize Icons -->
+    <script>
+      lucide.createIcons();
+      document.addEventListener('DOMContentLoaded', () => {
+          const modal = document.getElementById('image-modal');
+          const modalImg = document.getElementById('modal-image');
+          if (modal && modalImg) {
+              document.querySelectorAll('img[alt="Progress"], img.post-image').forEach(img => {
+                  img.style.cursor = 'zoom-in';
+                  img.addEventListener('click', () => {
+                      modalImg.src = img.src;
+                      modal.style.display = 'flex';
+                  });
+              });
+              modal.addEventListener('click', (e) => {
+                  if (e.target !== modalImg) {
+                      modal.style.display = 'none';
+                  }
+              });
+          }
+      });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
