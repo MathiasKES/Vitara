@@ -65,6 +65,8 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 *.db
+app/static/uploads/*
+!app/static/uploads/.gitkeep
 
 # Scrapy stuff:
 .scrapy
