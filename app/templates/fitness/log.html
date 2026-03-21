@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %} - Log Workout{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <h2 style="margin-bottom: 24px;">Log a Workout</h2>
+
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div>
+                {{ form.workout_type.label(class="form-label") }}
+                {{ form.workout_type(class="form-control", id="workout-type-select") }}
+            </div>
+            <div>
+                {{ form.workout_date.label(class="form-label") }}
+                {{ form.workout_date(class="form-control") }}
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div>
+                {{ form.duration_mins.label(class="form-label") }}
+                {{ form.duration_mins(class="form-control", placeholder="e.g. 45") }}
+            </div>
+            <div>
+                {{ form.calories.label(class="form-label") }}
+                {{ form.calories(class="form-control", placeholder="e.g. 300") }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.notes.label(class="form-label") }}
+            {{ form.notes(class="form-control", rows="3", placeholder="How did it feel?") }}
+        </div>
+
+        <div id="strength-section" style="display: none; margin-top: 32px; border-top: 1px solid var(--color-border); padding-top: 24px;">
+            <h3>Strength Exercises</h3>
+            <div id="exercise-rows" style="margin-top: 16px;">
+                <!-- JavaScript will inject rows here -->
+            </div>
+            <button type="button" id="add-exercise-btn" class="btn btn-outline" style="margin-top: 16px;">
+                <i data-lucide="plus"></i> Add Exercise
+            </button>
+        </div>
+
+        <div style="text-align: right; margin-top: 32px;">
+            <a href="{{ url_for('fitness.index') }}" class="btn btn-outline" style="margin-right: 12px;">Cancel</a>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/fitness.js') }}"></script>
+{% endblock %}

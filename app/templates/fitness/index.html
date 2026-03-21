@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %} - Fitness{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h2>Workout History</h2>
+    <div>
+        <a href="{{ url_for('fitness.stats') }}" class="btn btn-outline" style="margin-right: 12px;">
+            <i data-lucide="bar-chart-2"></i> Stats
+        </a>
+        <a href="{{ url_for('fitness.log_workout') }}" class="btn btn-primary">
+            <i data-lucide="plus"></i> Log Workout
+        </a>
+    </div>
+</div>
+
+{% if workouts %}
+<div style="display: grid; gap: 16px;">
+    {% for workout in workouts %}
+    <div class="workout-card">
+        <div class="workout-header">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <h3 style="margin: 0;">{{ workout.workout_type }}</h3>
+                <span style="background-color: var(--color-bg); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">{{ workout.workout_date.strftime('%b %d, %Y') }}</span>
+            </div>
+            <div style="color: var(--color-muted); font-size: 0.9rem;">
+                {% if workout.duration_mins %}{{ workout.duration_mins }} mins{% endif %}
+                {% if workout.calories %} • {{ workout.calories }} kcal{% endif %}
+            </div>
+        </div>
+        
+        {% if workout.notes %}
+        <p style="margin-bottom: 16px;">{{ workout.notes }}</p>
+        {% endif %}
+
+        {% if workout.exercises %}
+        <table class="exercise-table">
+            <thead>
+                <tr>
+                    <th>Exercise</th>
+                    <th>Sets</th>
+                    <th>Reps</th>
+                    <th>Weight</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ex in workout.exercises %}
+                <tr>
+                    <td>{{ ex.name }}</td>
+                    <td>{{ ex.sets or '-' }}</td>
+                    <td>{{ ex.reps or '-' }}</td>
+                    <td>{{ ex.weight or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 48px 24px;">
+    <p class="text-muted" style="color: var(--color-muted);">You haven't logged any workouts yet.</p>
+</div>
+{% endif %}
+{% endblock %}

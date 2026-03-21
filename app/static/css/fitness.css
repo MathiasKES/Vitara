@@ -1,0 +1,56 @@
+.workout-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.exercise-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.exercise-table th {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-muted);
+    font-weight: 500;
+}
+
+.exercise-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.exercise-row-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.exercise-row-input input {
+    flex: 1;
+}
+
+.remove-row-btn {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--color-danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

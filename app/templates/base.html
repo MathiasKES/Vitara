@@ -34,7 +34,7 @@
                 <a href="{{ url_for('journal.index') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('journal') %}active{% endif %}">
                     <i data-lucide="book-open"></i> Journal
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ url_for('fitness.index') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('fitness') %}active{% endif %}">
                     <i data-lucide="activity"></i> Fitness
                 </a>
                 <div style="flex: 1"></div>
