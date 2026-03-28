@@ -50,6 +50,8 @@
                 <span style="color: var(--color-accent);"><i data-lucide="globe" style="width: 14px; height: 14px; vertical-align: middle;"></i> Public</span>
                 {% elif post.visibility == 'followers' %}
                 <span style="color: var(--color-primary);"><i data-lucide="users" style="width: 14px; height: 14px; vertical-align: middle;"></i> Followers</span>
+                {% elif post.visibility == 'private' %}
+                <span style="color: var(--color-muted);"><i data-lucide="lock" style="width: 14px; height: 14px; vertical-align: middle;"></i> Private</span>
                 {% endif %}
             </div>
             {% if post.caption %}

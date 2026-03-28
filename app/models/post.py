@@ -12,7 +12,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     caption = db.Column(db.Text)
-    visibility = db.Column(db.String(20), default='public', nullable=False) # 'public', 'followers', 'private'
+    visibility = db.Column(db.String(20), default='private', nullable=False) # 'public', 'followers', 'private'
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     user = db.relationship('User', backref=db.backref('posts', lazy='dynamic', cascade="all, delete-orphan"))

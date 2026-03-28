@@ -47,7 +47,7 @@ def upload_post():
         post = Post(
             user_id=current_user.id,
             caption=form.caption.data,
-            visibility='public' if form.is_public.data else 'followers'
+            visibility=form.visibility.data
         )
         db.session.add(post)
         db.session.flush()
@@ -140,7 +140,7 @@ def edit_post(post_id):
 
     if form.validate_on_submit():
         post.caption = form.caption.data
-        post.visibility = 'public' if form.is_public.data else 'followers'
+        post.visibility = form.visibility.data
         
         post.workouts = Workout.query.filter(Workout.id.in_(form.workouts.data)).all() if form.workouts.data else []
 
@@ -149,7 +149,7 @@ def edit_post(post_id):
         return redirect(url_for('main.dashboard'))
     elif request.method == 'GET':
         form.caption.data = post.caption
-        form.is_public.data = (post.visibility == 'public')
+        form.visibility.data = post.visibility
         form.workouts.data = [w.id for w in post.workouts]
     return render_template('social/edit_post.html', form=form, post=post)
 
