@@ -63,7 +63,7 @@ Vitara is a minimal, privacy-first web application for journaling and fitness tr
    ```bash
    python run.py
    ```
-   The app will be available at `http://localhost:5000`.
+   The app will be available at `http://localhost:5002`.
 
 ## Administrative Tasks
 

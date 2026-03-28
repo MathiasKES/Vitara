@@ -1,5 +1,7 @@
 import argparse
 import sys
+from dotenv import load_dotenv
+load_dotenv()
 from app import create_app, db
 from app.models.user import User
 from app.models.invite import InviteToken
@@ -34,7 +36,7 @@ def create_invitation():
         # Since we are in CLI, url_for might not have server_name. 
         # I'll just provide the token and the path.
         print(f"Invitation Token Created: {new_invite.token}")
-        print(f"Registration Link: http://localhost:5000/register?invite={new_invite.token}")
+        print(f"Registration Link: http://localhost:5002/register?invite={new_invite.token}")
 
 def remove_user(email):
     with get_app_context():
