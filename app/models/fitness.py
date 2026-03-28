@@ -28,7 +28,10 @@ class Exercise(db.Model):
     name = db.Column(db.String(100), nullable=False)
     sets = db.Column(db.Integer)
     reps = db.Column(db.Integer)
-    weight = db.Column(db.Float)
+    weight = db.Column(db.String(50))
+    set_type = db.Column(db.String(50), default='normal')
+    group_id = db.Column(db.String(50), nullable=True)
+    order_index = db.Column(db.Integer, default=0)
 
     workout = db.relationship('Workout', backref=db.backref('exercises', lazy=True, cascade="all, delete-orphan"))
 

@@ -45,6 +45,36 @@
             <input type="email" name="email" value="{{ current_user.email }}" class="form-control" required>
         </div>
 
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+            <div class="form-group">
+                <label class="form-label">Weight ({{ 'kg' if current_user.units == 'metric' else 'lbs' }})</label>
+                <input type="number" step="0.1" name="weight" value="{{ current_user.weight or '' }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Height ({{ 'cm' if current_user.units == 'metric' else 'in' }})</label>
+                <input type="number" step="0.1" name="height" value="{{ current_user.height or '' }}" class="form-control">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px;">
+            <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select name="gender" class="form-control">
+                    <option value="" {% if not current_user.gender %}selected{% endif %}>Prefer not to say</option>
+                    <option value="male" {% if current_user.gender == 'male' %}selected{% endif %}>Male</option>
+                    <option value="female" {% if current_user.gender == 'female' %}selected{% endif %}>Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Fitness Level</label>
+                <select name="fitness_level" class="form-control">
+                    <option value="beginner" {% if current_user.fitness_level == 'beginner' %}selected{% endif %}>Beginner</option>
+                    <option value="intermediate" {% if current_user.fitness_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
+                    <option value="advanced" {% if current_user.fitness_level == 'advanced' %}selected{% endif %}>Advanced</option>
+                </select>
+            </div>
+        </div>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px;">
             <div class="form-group">
                 <label class="form-label">Theme Preference</label>
@@ -66,6 +96,19 @@
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
     </form>
+    
+    <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--color-border);">
+        <h3 style="margin-bottom: 16px;">Data Management</h3>
+        <p class="text-muted" style="margin-bottom: 16px; font-size: 0.9rem;">Export your workouts and exercises to JSON, or import them.</p>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <a href="{{ url_for('main.export_data') }}" class="btn btn-primary"><i data-lucide="download"></i> Export Data</a>
+            
+            <form method="POST" action="{{ url_for('main.import_data') }}" enctype="multipart/form-data" style="display: flex; gap: 8px; align-items: center; background: var(--color-bg); padding: 8px; border-radius: 8px; border: 1px solid var(--color-border);">
+                <input type="file" name="data_file" accept=".json" class="form-control" style="max-width: 250px;" required>
+                <button type="submit" class="btn btn-outline" style="white-space: nowrap;"><i data-lucide="upload"></i> Import</button>
+            </form>
+        </div>
+    </div>
 </div>
 <form id="remove-pic-form" method="POST" action="{{ url_for('main.remove_profile_pic') }}" onsubmit="return confirm('Are you sure you want to remove your profile picture?');" style="display: none;"></form>
 {% endblock %}

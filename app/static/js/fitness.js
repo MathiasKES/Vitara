@@ -32,7 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="text" name="exercise_name[]" class="form-control" placeholder="Exercise Name (e.g. Bench Press)" required>
             <input type="number" name="exercise_sets[]" class="form-control" placeholder="Sets" style="max-width: 80px;">
             <input type="number" name="exercise_reps[]" class="form-control" placeholder="Reps" style="max-width: 80px;">
-            <input type="number" step="0.1" name="exercise_weight[]" class="form-control" placeholder="Weight" style="max-width: 100px;">
+            <input type="text" name="exercise_weight[]" class="form-control" placeholder="Weight (e.g. 50 or max)" style="max-width: 120px;">
+            <select name="exercise_set_type[]" class="form-control" style="max-width: 110px;">
+                <option value="normal">Normal</option>
+                <option value="superset">Superset</option>
+                <option value="dropset">Dropset</option>
+            </select>
             <button type="button" class="remove-row-btn" aria-label="Remove">
                 <i data-lucide="x-circle"></i>
             </button>

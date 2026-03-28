@@ -28,25 +28,45 @@
 </div>
 
 <div style="margin-top: 40px;">
-    <h2>My Progress Pictures</h2>
-    {% if my_pics %}
+    <h2>My Posts</h2>
+    {% if my_posts %}
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
-        {% for pic in my_pics %}
+        {% for post in my_posts %}
         <div class="card" style="padding: 8px;">
-            <img src="{{ url_for('static', filename='uploads/' + pic.image_path) }}" alt="Progress" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #000;">
-            <div style="margin-top: 8px; font-size: 0.85rem; color: var(--color-muted); display: flex; justify-content: space-between;">
-                <span>{{ pic.created_at.strftime('%b %d, %Y') }}</span>
-                {% if pic.is_public %}
-                <span style="color: var(--color-accent);"><i data-lucide="globe" style="width: 14px; height: 14px; vertical-align: middle;"></i> Public</span>
+            {% if post.media %}
+                {% set first_media = post.media|first %}
+                {% if first_media.media_type == 'video' %}
+                    <video src="{{ url_for('static', filename='uploads/' + first_media.file_path) }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #000;"></video>
                 {% else %}
-                <span><i data-lucide="lock" style="width: 14px; height: 14px; vertical-align: middle;"></i> Private</span>
+                    <img src="{{ url_for('static', filename='uploads/' + first_media.file_path) }}" alt="Post" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #000;">
+                {% endif %}
+            {% else %}
+                <div style="width: 100%; height: 200px; background: var(--color-bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--color-muted);">No Media</div>
+            {% endif %}
+            
+            <div style="margin-top: 8px; font-size: 0.85rem; color: var(--color-muted); display: flex; justify-content: space-between;">
+                <span>{{ post.created_at.strftime('%b %d, %Y') }}</span>
+                {% if post.visibility == 'public' %}
+                <span style="color: var(--color-accent);"><i data-lucide="globe" style="width: 14px; height: 14px; vertical-align: middle;"></i> Public</span>
+                {% elif post.visibility == 'followers' %}
+                <span style="color: var(--color-primary);"><i data-lucide="users" style="width: 14px; height: 14px; vertical-align: middle;"></i> Followers</span>
                 {% endif %}
             </div>
-            {% if pic.caption %}
-            <p style="margin-top: 4px; font-size: 0.9rem;">{{ pic.caption }}</p>
+            {% if post.caption %}
+            <p style="margin-top: 4px; font-size: 0.9rem;">{{ post.caption|truncate(50) }}</p>
             {% endif %}
-            <div style="margin-top: 12px; text-align: right;">
-                <form method="POST" action="{{ url_for('social.delete_pic', pic_id=pic.id) }}" onsubmit="return confirm('Are you sure you want to delete this picture?');">
+            
+            {% if post.workouts %}
+            <div style="margin-top: 8px;">
+                <span style="font-size: 0.75rem; background: var(--color-bg); padding: 4px 8px; border-radius: 4px; color: var(--color-accent); display: inline-flex; align-items: center; gap: 4px;">
+                    <i data-lucide="activity" style="width: 12px; height: 12px;"></i> {{ post.workouts|length }} workout(s)
+                </span>
+            </div>
+            {% endif %}
+
+            <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px;">
+                <a href="{{ url_for('social.edit_post', post_id=post.id) }}" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem;">Edit</a>
+                <form method="POST" action="{{ url_for('social.delete_post', post_id=post.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?');">
                     <button type="submit" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem; color: var(--color-danger); border-color: var(--color-danger);">Delete</button>
                 </form>
             </div>
@@ -55,8 +75,8 @@
     </div>
     {% else %}
     <div class="card" style="text-align: center; padding: 32px 16px; margin-top: 16px;">
-        <p class="text-muted">You haven't uploaded any progress pictures yet.</p>
-        <a href="{{ url_for('social.upload_pic') }}" class="btn btn-outline" style="margin-top: 12px;">Upload Picture</a>
+        <p class="text-muted">You haven't uploaded any posts yet.</p>
+        <a href="{{ url_for('social.upload_post') }}" class="btn btn-outline" style="margin-top: 12px;">Create Post</a>
     </div>
     {% endif %}
 </div>

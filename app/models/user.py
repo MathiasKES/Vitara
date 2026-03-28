@@ -3,6 +3,11 @@ from app import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
+followers = db.Table('followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('users.id'))
+)
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
@@ -20,6 +25,28 @@ class User(UserMixin, db.Model):
     units = db.Column(db.String(20), default='metric')
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     last_seen = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    weight = db.Column(db.Float)
+    height = db.Column(db.Float)
+    gender = db.Column(db.String(20))
+    fitness_level = db.Column(db.String(20))
+
+    followed = db.relationship(
+        'User', secondary=followers,
+        primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

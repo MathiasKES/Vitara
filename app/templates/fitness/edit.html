@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %} - Edit Workout{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <h2 style="margin-bottom: 24px;">Edit Workout</h2>
+
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div>
+                {{ form.workout_type.label(class="form-label") }}
+                {{ form.workout_type(class="form-control", id="workout-type-select") }}
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <div style="flex: 1;">
+                    {{ form.workout_date.label(class="form-label") }}
+                    {{ form.workout_date(class="form-control") }}
+                </div>
+                <div style="flex: 1;">
+                    {{ form.workout_time.label(class="form-label") }}
+                    {{ form.workout_time(class="form-control", id="workout_time", type="time") }}
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+            <div style="flex: 1;">
+                {{ form.duration_mins.label(class="form-label") }}
+                {{ form.duration_mins(class="form-control", placeholder="Mins") }}
+            </div>
+            <div style="flex: 1; display: none;" id="distance-section">
+                <label class="form-label" for="distance">Distance ({{ 'km' if current_user.units == 'metric' else 'mi' }})</label>
+                {{ form.distance(class="form-control", step="0.01", placeholder="0.00") }}
+            </div>
+            <div style="flex: 1;">
+                {{ form.calories.label(class="form-label") }}
+                {{ form.calories(class="form-control", placeholder="kcal") }}
+                <p style="font-size: 0.8rem; color: var(--color-muted); margin-top: 4px;">Leave blank to auto-calculate</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.notes.label(class="form-label") }}
+            {{ form.notes(class="form-control", rows="3", placeholder="How did it feel?") }}
+        </div>
+
+        <div id="strength-section" style="display: none; margin-top: 32px; border-top: 1px solid var(--color-border); padding-top: 24px;">
+            <h3>Strength Exercises</h3>
+            <div id="exercise-rows" style="margin-top: 16px;">
+                {% for ex in workout.exercises|sort(attribute='order_index') %}
+                <div class="exercise-row-input">
+                    <input type="text" name="exercise_name[]" class="form-control" placeholder="Exercise Name" value="{{ ex.name }}" required>
+                    <input type="number" name="exercise_sets[]" class="form-control" placeholder="Sets" style="max-width: 80px;" value="{{ ex.sets or '' }}">
+                    <input type="number" name="exercise_reps[]" class="form-control" placeholder="Reps" style="max-width: 80px;" value="{{ ex.reps or '' }}">
+                    <input type="text" name="exercise_weight[]" class="form-control" placeholder="Weight (e.g. max)" style="max-width: 120px;" value="{{ ex.weight or '' }}">
+                    <select name="exercise_set_type[]" class="form-control" style="max-width: 110px;">
+                        <option value="normal" {% if ex.set_type == 'normal' %}selected{% endif %}>Normal</option>
+                        <option value="superset" {% if ex.set_type == 'superset' %}selected{% endif %}>Superset</option>
+                        <option value="dropset" {% if ex.set_type == 'dropset' %}selected{% endif %}>Dropset</option>
+                    </select>
+                    <button type="button" class="remove-row-btn" aria-label="Remove" onclick="this.closest('.exercise-row-input').remove();">
+                        <i data-lucide="x-circle"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-exercise-btn" class="btn btn-outline" style="margin-top: 16px;">
+                <i data-lucide="plus"></i> Add Exercise
+            </button>
+        </div>
+
+        <div style="text-align: right; margin-top: 32px;">
+            <a href="{{ url_for('fitness.index') }}" class="btn btn-outline" style="margin-right: 12px;">Cancel</a>
+            {{ form.submit(class="btn btn-primary", value="Save Changes") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/fitness.js') }}"></script>
+{% endblock %}

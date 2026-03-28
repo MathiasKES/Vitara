@@ -6,40 +6,87 @@
 <div class="feed-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
         <h2>Community Feed</h2>
-        <a href="{{ url_for('social.upload_pic') }}" class="btn btn-primary">
-            <i data-lucide="camera"></i> Post Progress
+        <a href="{{ url_for('social.upload_post') }}" class="btn btn-primary">
+            <i data-lucide="plus-circle"></i> New Post
         </a>
     </div>
 
-    {% if pictures %}
-        {% for pic in pictures %}
-        <div class="post-card">
-            <div class="post-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+    {% if posts %}
+        {% for post in posts %}
+        <div class="post-card" style="margin-bottom: 32px; border-radius: 12px; background: var(--color-bg); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div class="post-header" style="display: flex; justify-content: space-between; align-items: center; padding: 16px;">
                 <div style="display: flex; gap: 12px; align-items: center;">
-                    {% if pic.user.profile_pic_path %}
-                    <img src="{{ url_for('static', filename='uploads/' + pic.user.profile_pic_path) }}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    {% if post.user.profile_pic_path %}
+                    <img src="{{ url_for('static', filename='uploads/' + post.user.profile_pic_path) }}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                     {% else %}
-                    <div class="post-avatar" style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--color-bg); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--color-accent);">
-                        {{ pic.user.display_name[0]|upper }}
+                    <div class="post-avatar" style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--color-bg); border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--color-accent);">
+                        {{ post.user.display_name[0]|upper }}
                     </div>
                     {% endif %}
                     <div class="post-meta">
-                        <h4>{{ pic.user.display_name }}</h4>
-                        <span>{{ pic.created_at.strftime('%b %d at %H:%M') }}</span>
+                        <h4 style="margin: 0; font-size: 1rem;">{{ post.user.display_name }}</h4>
+                        <span style="font-size: 0.8rem; color: var(--color-muted);">{{ post.created_at.strftime('%b %d at %H:%M') }}</span>
                     </div>
                 </div>
-                {% if pic.user_id == current_user.id %}
-                <form method="POST" action="{{ url_for('social.delete_pic', pic_id=pic.id) }}" onsubmit="return confirm('Are you sure you want to delete this post?');">
-                    <button type="submit" style="background: none; border: none; color: var(--color-danger); cursor: pointer; padding: 4px;">
-                        <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
-                    </button>
-                </form>
-                {% endif %}
+                
+                <div style="display: flex; gap: 8px;">
+                    {% if post.user_id != current_user.id %}
+                        {% if current_user.is_following(post.user) %}
+                        <form method="POST" action="{{ url_for('social.unfollow', user_id=post.user.id) }}">
+                            <button type="submit" class="btn btn-outline" style="padding: 4px 12px; font-size: 0.8rem;">Unfollow</button>
+                        </form>
+                        {% else %}
+                        <form method="POST" action="{{ url_for('social.follow', user_id=post.user.id) }}">
+                            <button type="submit" class="btn btn-primary" style="padding: 4px 12px; font-size: 0.8rem;">Follow</button>
+                        </form>
+                        {% endif %}
+                    {% else %}
+                        <form method="POST" action="{{ url_for('social.delete_post', post_id=post.id) }}" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                            <button type="submit" style="background: none; border: none; color: var(--color-danger); cursor: pointer; padding: 4px;">
+                                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
-            <img src="{{ url_for('static', filename='uploads/' + pic.image_path) }}" alt="Progress Picture" class="post-image">
-            {% if pic.caption %}
-            <div class="post-caption">
-                <strong>{{ pic.user.display_name }}</strong> {{ pic.caption }}
+            
+            {% if post.media %}
+            <div class="post-carousel" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0; background: #000; position: relative;">
+                {% for m in post.media|sort(attribute='order_index') %}
+                    <div style="min-width: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center;">
+                        {% if m.media_type == 'video' %}
+                            <video src="{{ url_for('static', filename='uploads/' + m.file_path) }}" controls style="width: 100%; max-height: 600px; object-fit: contain;"></video>
+                        {% else %}
+                            <img src="{{ url_for('static', filename='uploads/' + m.file_path) }}" alt="Post Media" style="width: 100%; max-height: 600px; object-fit: contain;">
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <!-- Indicator if multi image -->
+            {% if post.media|length > 1 %}
+            <div style="text-align: center; padding: 8px; font-size: 0.8rem; color: var(--color-muted);">
+                Swipe to see more ({{ post.media|length }} attachments)
+            </div>
+            {% endif %}
+            {% endif %}
+            
+            {% if post.caption %}
+            <div class="post-caption" style="padding: 16px; font-size: 0.95rem;">
+                <strong>{{ post.user.display_name }}</strong> {{ post.caption }}
+            </div>
+            {% endif %}
+            
+            {% if post.workouts %}
+            <div style="padding: 16px; border-top: 1px solid var(--color-border); background: var(--color-surface);">
+                <h5 style="margin: 0 0 8px 0; font-size: 0.85rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.5px;">Attached Workouts</h5>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    {% for w in post.workouts %}
+                    <div style="background: var(--color-bg); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; border: 1px solid var(--color-border);">
+                        <strong>{{ w.workout_type }}</strong> • {{ w.duration_mins or 0 }}m
+                        {% if w.calories %}<br><span style="color: var(--color-accent);"><i data-lucide="flame" style="width: 12px; height: 12px;"></i> {{ w.calories }} kcal</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
             {% endif %}
         </div>
@@ -47,9 +94,9 @@
     {% else %}
         <div class="card" style="text-align: center; padding: 64px 24px;">
             <i data-lucide="image" style="width: 48px; height: 48px; color: var(--color-muted); margin-bottom: 16px;"></i>
-            <h3 style="color: var(--color-text);">No posts yet</h3>
-            <p style="color: var(--color-muted); margin-bottom: 24px;">Be the first to share your progress!</p>
-            <a href="{{ url_for('social.upload_pic') }}" class="btn btn-primary">Share Progress</a>
+            <h3 style="color: var(--color-text);">No posts in feed</h3>
+            <p style="color: var(--color-muted); margin-bottom: 24px;">Follow some users or share your own progress!</p>
+            <a href="{{ url_for('social.upload_post') }}" class="btn btn-primary">Create Post</a>
         </div>
     {% endif %}
 </div>

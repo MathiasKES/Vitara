@@ -1,32 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %} - Upload Progress{% endblock %}
+{% block title %} - Create Post{% endblock %}
 
 {% block content %}
 <div class="card" style="max-width: 500px; margin: 0 auto;">
-    <h2 style="margin-bottom: 24px;">Post Progress Picture</h2>
+    <h2 style="margin-bottom: 24px;">Create New Post</h2>
 
     <form method="POST" action="" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         
         <div class="form-group">
-            {{ form.photo.label(class="form-label") }}
-            {{ form.photo(class="form-control", style="padding: 8px; cursor: pointer;") }}
-            {% for error in form.photo.errors %}
+            {{ form.media.label(class="form-label") }}
+            {{ form.media(class="form-control", style="padding: 8px; cursor: pointer;", multiple="multiple") }}
+            {% for error in form.media.errors %}
                 <span style="color: var(--color-danger); font-size: 0.85rem;">[{{ error }}]</span>
             {% endfor %}
+            <p style="font-size: 0.8rem; color: var(--color-muted); margin-top: 4px;">Hold Ctrl/Cmd to select multiple images or videos.</p>
         </div>
 
         <div class="form-group">
             {{ form.caption.label(class="form-label") }}
-            {{ form.caption(class="form-control", placeholder="How are you feeling about your progress?") }}
+            {{ form.caption(class="form-control", placeholder="Share your progress or thoughts...") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.workouts.label(class="form-label") }}
+            {{ form.workouts(class="form-control", style="min-height: 100px;") }}
+            <p style="font-size: 0.8rem; color: var(--color-muted); margin-top: 4px;">Hold Ctrl/Cmd to select multiple workouts to attach.</p>
         </div>
 
         <div class="form-group" style="display: flex; align-items: center; gap: 8px; background: var(--color-bg); padding: 12px; border-radius: 8px;">
             {{ form.is_public() }}
             <div>
                 {{ form.is_public.label(style="margin-bottom: 0; font-weight: 600; cursor: pointer;") }}
-                <p style="font-size: 0.85rem; color: var(--color-muted); margin: 0;">If checked, this picture will appear on the global community feed.</p>
+                <p style="font-size: 0.85rem; color: var(--color-muted); margin: 0;">If unchecked, only your followers can see this post.</p>
             </div>
         </div>
 
